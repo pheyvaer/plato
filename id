@@ -1,0 +1,8 @@
+{
+  "@context": ["https://www.w3.org/ns/solid/oidc-context.jsonld"],
+
+  "client_id": "https://solid-plato.netlify.app/id",
+  "client_name": "Plato",
+  "redirect_uris": ["https://solid-plato.netlify.app", "https://solid-plato.netlify.app/"],
+  "client_uri": "https://solid-plato.netlify.app"
+}
