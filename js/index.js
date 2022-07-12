@@ -50,8 +50,8 @@ async function loginAndFetch(oidcIssuer, solidFetch) {
         oidcIssuer,
         // Specify the URL the Solid Identity Provider should redirect to after the user logs in,
         // e.g., the current page for a single-page app.
-        //redirectUrl: window.location.href,
-        clientId: 'https://solid-plato.netlify.app/id'
+        redirectUrl: window.location.href,
+        //clientId: 'https://solid-plato.netlify.app/id'
       });
     }
   } else {
