@@ -2,6 +2,7 @@ import {fetch, handleIncomingRedirect, getDefaultSession, login} from '@inrupt/s
 import {getMostRecentWebID, getPersonName, getRDFasJson, setMostRecentWebID} from "./utils";
 
 let storageLocationUrl;
+let clientIdEnabled = false;
 let promoterCache = {};
 
 window.onload = async () => {
@@ -14,6 +15,7 @@ window.onload = async () => {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   storageLocationUrl = urlParams.get('location') || 'https://pheyvaer.pod.knows.idlab.ugent.be/examples/master-thesis-students/1-public';
+  clientIdEnabled = urlParams.get('enable_client_id') === 'true';
 
   document.getElementById('storage-location').value = storageLocationUrl;
 
@@ -43,16 +45,15 @@ async function loginAndFetch(oidcIssuer, solidFetch) {
     if (oidcIssuer) {
       document.getElementById('current-user').classList.add('hidden');
       document.getElementById('webid-form').classList.remove('hidden');
-      // The `login()` redirects the user to their identity provider;
-      // i.e., moves the user away from the current page.
-      await login({
-        // Specify the URL of the user's Solid Identity Provider; e.g., "https://broker.pod.inrupt.com" or "https://inrupt.net"
-        oidcIssuer,
-        // Specify the URL the Solid Identity Provider should redirect to after the user logs in,
-        // e.g., the current page for a single-page app.
-        redirectUrl: window.location.href,
-        //clientId: 'https://solid-plato.netlify.app/id'
-      });
+      let loginOptions = {oidcIssuer};
+
+      if (clientIdEnabled) {
+        loginOptions.clientId = 'https://solid-plato.netlify.app/id'
+      } else {
+        loginOptions.redirectUrl = window.location.href
+      }
+
+      await login(loginOptions);
     }
   } else {
     const webid = getDefaultSession().info.webId;
