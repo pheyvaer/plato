@@ -57,7 +57,12 @@ async function loginAndFetch(oidcIssuer, solidFetch) {
   //      only after it handles the incoming redirect from the Solid Identity Provider.
   //   If the page is not being loaded after a redirect from the Solid Identity Provider,
   //      nothing happens.
-  await handleIncomingRedirect();
+  await handleIncomingRedirect(
+    {
+      url: window.location.href,
+      restorePreviousSession: true,
+    }
+  );
 
   // 2. Start the Login Process if not already logged in.
   if (!getDefaultSession().info.isLoggedIn) {
@@ -68,7 +73,7 @@ async function loginAndFetch(oidcIssuer, solidFetch) {
 
       if (clientIdEnabled) {
         loginOptions.clientId = CLIENT_ID;
-        loginOptions.redirectUrl = CLIENT_ID.replace('/id','');
+        loginOptions.redirectUrl = CLIENT_ID.replace('/id', '');
       } else {
         loginOptions.redirectUrl = window.location.href;
       }
@@ -156,7 +161,7 @@ async function loadTable(solidFetch) {
     const $table = document.createElement('table');
     const $thead = document.createElement('thead');
     const $tbody = document.createElement('tbody');
-    $thead.innerHTML= `<tr><th>Master thesis</th><th>Student</th><th>Promoters</th><th>Degree</th></tr>`;
+    $thead.innerHTML = `<tr><th>Master thesis</th><th>Student</th><th>Promoters</th><th>Degree</th></tr>`;
     $table.appendChild($thead);
     $table.appendChild($tbody);
     document.getElementById('table-container').innerHTML = '';
@@ -166,7 +171,7 @@ async function loadTable(solidFetch) {
 
     result['@graph'].forEach(async thesis => {
       await addThesisToTable($tbody, thesis);
-      thesisAdded ++;
+      thesisAdded++;
 
       if (thesisAdded === result['@graph'].length) {
         resolve();
