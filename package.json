@@ -4,9 +4,11 @@
   "description": "Replicate Plato using Solid.",
   "main": "index.js",
   "scripts": {
-    "prestart": "npx webpack",
+    "prestart": "npm run build:id:prod; npx webpack",
+    "build:id:dev": "sed 's/URL/http:\\/\\/localhost:8080/g' id-raw > id",
+    "build:id:prod": "sed 's/URL/https:\\/\\/solid-plato.netlify.app/g' id-raw > id",
     "start": "npx http-server .",
-    "watch": "npx webpack serve -c ./webpack.dev.config.js --static ."
+    "watch": "npm run build:id:dev; npx webpack serve -c ./webpack.dev.config.js --static ."
   },
   "author": "Pieter Heyvaert (https://pieterheyvaert.com)",
   "license": "MIT",

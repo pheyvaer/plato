@@ -1,9 +1,20 @@
 import {fetch, handleIncomingRedirect, getDefaultSession, login} from '@inrupt/solid-client-authn-browser';
-import {getMostRecentWebID, getPersonName, getRDFasJson, setMostRecentWebID} from "./utils";
+import {
+  getItemFromLocalStorage,
+  getMostRecentWebID,
+  getPersonName,
+  getRDFasJson,
+  setItemFromLocalStorage,
+  setMostRecentWebID
+} from "./utils";
 
 let storageLocationUrl;
 let clientIdEnabled = false;
 let promoterCache = {};
+const DEFAULTS = {
+  storageLocationUrl: 'https://pheyvaer.pod.knows.idlab.ugent.be/examples/master-thesis-students/1-public',
+  clientIdEnabled: false
+}
 
 window.onload = async () => {
   let solidFetch = fetch;
@@ -14,8 +25,16 @@ window.onload = async () => {
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  storageLocationUrl = urlParams.get('location') || 'https://pheyvaer.pod.knows.idlab.ugent.be/examples/master-thesis-students/1-public';
+
+  storageLocationUrl = urlParams.get('location') || getItemFromLocalStorage('storageLocationUrl') || DEFAULTS.storageLocationUrl;
   clientIdEnabled = urlParams.get('enable_client_id') === 'true';
+
+  if (!clientIdEnabled && urlParams.get('enable_client_id') !== 'false') {
+    clientIdEnabled = getItemFromLocalStorage('clientIdEnabled') === 'true';
+  }
+
+  setItemFromLocalStorage('storageLocationUrl', storageLocationUrl);
+  setItemFromLocalStorage('clientIdEnabled', clientIdEnabled);
 
   document.getElementById('storage-location').value = storageLocationUrl;
 
@@ -48,15 +67,18 @@ async function loginAndFetch(oidcIssuer, solidFetch) {
       let loginOptions = {oidcIssuer};
 
       if (clientIdEnabled) {
-        loginOptions.clientId = 'https://solid-plato.netlify.app/id'
+        loginOptions.clientId = CLIENT_ID;
+        loginOptions.redirectUrl = CLIENT_ID.replace('/id','');
       } else {
-        loginOptions.redirectUrl = window.location.href
+        loginOptions.redirectUrl = window.location.href;
       }
 
+      console.log(loginOptions);
       await login(loginOptions);
     }
   } else {
     const webid = getDefaultSession().info.webId;
+    setQueryParametersAfterLogin();
 
     const frame = {
       "@context": {
@@ -206,4 +228,19 @@ async function getPromoterName(webid) {
   }
 
   return promoterCache[webid];
+}
+
+function setQueryParametersAfterLogin() {
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+
+  if (!urlParams.get('location') && storageLocationUrl !== DEFAULTS.storageLocationUrl) {
+    urlParams.set('location', storageLocationUrl);
+  }
+
+  if (!urlParams.get('enable_client_id') && clientIdEnabled !== DEFAULTS.storageLocationUrl) {
+    urlParams.set('enable_client_id', clientIdEnabled);
+  }
+
+  window.history.replaceState(null, null, '?' + urlParams.toString());
 }
