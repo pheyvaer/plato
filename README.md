@@ -30,7 +30,8 @@ of a bug in Community Solid Servers with a version lower than 4.0.1.
 ## Client ID
 The Client ID is served at `/id`.
 You find the template for the Client ID in the `id-raw`.
-You get the Client ID in the file `id` for development via
+You can add more information about your Web app to the template if you want to.
+You generate the Client ID based on `id-raw` for development via
 ```shell
 npm run build:id:dev
 ```
@@ -38,9 +39,14 @@ and for production via
 ```shell
 npm run build:id:prod
 ```
+You find the result in the file `id`.
 We configured the Webpack dev server to set the Content-Type of `/id` to `application/ld+json`
 in `webpack.dev.config.js`.
 
+As a result, 
+during development the Client ID is hosted on localhost and 
+the information it contains all relates to localhost as well.
+In production the actual production urls are used. 
 You find the changes you need to do for production [here](#prepare-for-production).
 
 ## Prepare for production
