@@ -1,6 +1,6 @@
 # Plato
 
-Show master thesis information using Solid.
+This Web app shows master thesis information using Solid.
 A live version is available [here](https://solid-plato.netlify.app/id).
 
 ## Usage
@@ -28,6 +28,7 @@ The Client ID is disabled by default at the moment because
 of a bug in Community Solid Servers with a version lower than 4.0.1.
 
 ## Client ID
+The Client ID is served at `/id`.
 You find the template for the Client ID in the `id-raw`.
 You get the Client ID in the file `id` for development via
 ```shell
@@ -37,11 +38,16 @@ and for production via
 ```shell
 npm run build:id:prod
 ```
-You need to update the latter script to use your production url.
-
 We configured the Webpack dev server to set the Content-Type of `/id` to `application/ld+json`
 in `webpack.dev.config.js`.
-You need to set the value for `CLIENT_ID` to your production url of the Client ID in `webpack.config.js`.
+
+You find the changes you need to do for production [here](#prepare-for-production).
+
+## Prepare for production
+You need to update the following to prepare the Web app for production.
+
+- Update the `build:id:prod` script in `package.json` to use your production url of the Web app.
+- Update the `CLIENT_ID` in `webpack.config.js` to use your production url of the Client ID of the Web app.
 
 ## License
 
