@@ -27,6 +27,22 @@ by using the query parameter `enable_client_id` with the value `true`.
 The Client ID is disabled by default at the moment because
 of a bug in Community Solid Servers with a version lower than 4.0.1.
 
+## Client ID
+You find the template for the Client ID in the `id-raw`.
+You get the Client ID in the file `id` for development via
+```shell
+npm run build:id:dev
+```
+and for production via
+```shell
+npm run build:id:prod
+```
+You need to update the latter script to use your production url.
+
+We configured the Webpack dev server to set the Content-Type of `/id` to `application/ld+json`
+in `webpack.dev.config.js`.
+You need to set the value for `CLIENT_ID` to your production url of the Client ID in `webpack.config.js`.
+
 ## License
 
 This code is copyrighted by [Ghent University – imec](http://idlab.ugent.be/) and
