@@ -1,6 +1,7 @@
 # Plato
 
 Show master thesis information using Solid.
+A live version is available [here](https://solid-plato.netlify.app/id).
 
 ## Usage
 Install dependencies via
