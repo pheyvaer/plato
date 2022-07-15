@@ -108,8 +108,7 @@ async function loginAndFetch(oidcIssuer, solidFetch) {
 }
 
 async function clickLogInBtn(solidFetch) {
-  // Hide no OIDC issuer error
-  // document.getElementById('no-oidc-issuer-error').classList.add('hidden');
+  document.getElementById('status-message').innerText = 'Loading.';
 
   // Get web id
   const webId = document.getElementById('webid').value;
@@ -140,7 +139,8 @@ async function clickLogInBtn(solidFetch) {
   if (oidcIssuer) {
     loginAndFetch(oidcIssuer, solidFetch);
   } else {
-    document.getElementById('no-oidc-issuer-error').classList.remove('hidden');
+    document.getElementById('status-message').classList.remove('hidden');
+    document.getElementById('status-message').innerText = 'No OIDC issuer found in your WebID.';
   }
 }
 
