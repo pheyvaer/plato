@@ -6,5 +6,6 @@
   "redirect_uris": ["URL", "URL/"],
   "client_uri": "URL",
   "logo_uri": "URL/img/logo.png",
-  "http://schema.org/description": "View information about master thesis students that is hosted on a Solid pod."
+  "http://schema.org/description": "View information about master thesis students that is hosted on a Solid pod.",
+  "http://schema.org/category" : { "@id": "https://data.knows.idlab.ugent.be/person/office/application-categories#reference" }
 }
