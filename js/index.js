@@ -150,7 +150,10 @@ async function loadTable(solidFetch) {
       "@context": {
         "@vocab": "http://schema.org/",
         "knows": "https://data.knows.idlab.ugent.be/person/office/#",
+        "foaf": "http://xmlns.com/foaf/0.1/",
         "knows:promoter": {"@type": "@id"},
+        "knows:supervisor": {"@type": "@id"},
+        "foaf:mbox": {"@type": "@id"}
       },
       "@type": "Thesis"
     };
@@ -161,7 +164,7 @@ async function loadTable(solidFetch) {
     const $table = document.createElement('table');
     const $thead = document.createElement('thead');
     const $tbody = document.createElement('tbody');
-    $thead.innerHTML = `<tr><th>Master thesis</th><th>Student</th><th>Promoters</th><th>Degree</th></tr>`;
+    $thead.innerHTML = `<tr><th>Master thesis</th><th>Student</th><th>Promoters</th><td>Supervisors</td><th>Degree</th></tr>`;
     $table.appendChild($thead);
     $table.appendChild($tbody);
     document.getElementById('table-container').innerHTML = '';
@@ -188,9 +191,16 @@ async function addThesisToTable($tbody, thesis) {
   row.appendChild(titleColumn);
 
   const authorColumn = document.createElement('td');
-  authorColumn.innerText = thesis.author.name;
+
+  if (thesis.author['foaf:mbox']) {
+    authorColumn.innerHTML = `<a href="${thesis.author['foaf:mbox']}">${thesis.author.name}</a>`;
+  } else {
+    authorColumn.innerText = thesis.author.name;
+  }
+
   row.appendChild(authorColumn);
 
+  // Promoters
   const promotersColumn = document.createElement('td');
   let promoters = thesis['knows:promoter'];
 
@@ -205,6 +215,22 @@ async function addThesisToTable($tbody, thesis) {
 
   promotersColumn.innerText = promoterNames.join(', ');
   row.appendChild(promotersColumn);
+
+  // Supervisors
+  const supervisorsColumn = document.createElement('td');
+  let supervisors = thesis['knows:supervisor'];
+
+  if (!Array.isArray(supervisors)) {
+    supervisors = [supervisors];
+  }
+
+  const supervisorNames = [];
+  for (const supervisor of supervisors) {
+    supervisorNames.push(await getPromoterName(supervisor));
+  }
+
+  supervisorsColumn.innerText = supervisorNames.join(', ');
+  row.appendChild(supervisorsColumn);
 
   const degreeColumn = document.createElement('td');
   degreeColumn.innerText = thesis.inSupportOf;
